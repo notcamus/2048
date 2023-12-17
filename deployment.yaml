@@ -1,0 +1,42 @@
+# deployment.yaml
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: 2048-app
+  namespace: 2048  # Set the namespace here
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: 2048
+  template:
+    metadata:
+      labels:
+        app: 2048
+    spec:
+      containers:
+      - name: 2048-container
+        image: us-east1-docker.pkg.dev/stately-pulsar-405207/repo2048/docker-2048:38
+        ports:
+        - containerPort: 80
+  imagePullSecrets:
+  - name: ar-key
+
+---
+
+# service.yaml
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: 2048-service
+  namespace: 2048  # Set the namespace here
+spec:
+  selector:
+    app: 2048
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+  type: LoadBalancer
